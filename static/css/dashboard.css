@@ -1,0 +1,185 @@
+/* Dashboard Specific Styles */
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px;
+}
+
+/* Trade status indicators */
+.trade-status {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.trade-status.open {
+    background-color: var(--success-color);
+}
+
+.trade-status.closed {
+    background-color: var(--danger-color);
+}
+
+.trade-status.pending {
+    background-color: var(--warning-color);
+}
+
+/* Signal strength indicators */
+.signal-strength {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 4px;
+}
+
+.signal-strength.weak {
+    width: 25%;
+    background-color: var(--danger-color);
+}
+
+.signal-strength.moderate {
+    width: 50%;
+    background-color: var(--warning-color);
+}
+
+.signal-strength.strong {
+    width: 75%;
+    background-color: var(--info-color);
+}
+
+.signal-strength.very_strong {
+    width: 100%;
+    background-color: var(--success-color);
+}
+
+/* Quick stats */
+.quick-stat {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
+}
+
+.quick-stat .value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.quick-stat .label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Activity feed */
+.activity-feed {
+    list-style: none;
+    padding: 0;
+}
+
+.activity-item {
+    padding: 15px;
+    border-left: 3px solid var(--primary-color);
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0 8px 8px 0;
+}
+
+.activity-item.success {
+    border-left-color: var(--success-color);
+}
+
+.activity-item.danger {
+    border-left-color: var(--danger-color);
+}
+
+.activity-item.warning {
+    border-left-color: var(--warning-color);
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+/* Market ticker */
+.market-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.ticker-item {
+    display: inline-block;
+    padding: 0 30px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticker-item:last-child {
+    border-right: none;
+}
+
+/* Progress bars */
+.progress {
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 8px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+.progress-bar {
+    border-radius: 4px;
+}
+
+/* Tool cards */
+.tool-card {
+    text-align: center;
+    padding: 30px 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tool-card i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+    
+    .sidebar-sticky {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .quick-stat .value {
+        font-size: 2rem;
+    }
+    
+    .tool-card {
+        padding: 20px 15px;
+    }
+    
+    .tool-card i {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,985 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trading Tools - SkillLink FX{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero bg-gradient-primary text-white py-5">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">🛠️ Professional Trading Tools</h1>
+                <p class="lead mb-4">Position size, risk management, Fibonacci, pivot points – all the calculators you need to trade smarter.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <span class="badge bg-info p-3">⚡ Real‑time calculations</span>
+                    <span class="badge bg-success p-3">📊 12+ professional tools</span>
+                    <span class="badge bg-warning p-3">🎯 100% free</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== QUICK CALCULATORS (ENHANCED) ========== -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 text-light">⚙️ Quick Calculators</h2>
+        <div class="row g-4">
+            <!-- Position Size Calculator (with Risk % & Account Currency) -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-light">
+                            <i class="fas fa-calculator text-primary me-2"></i>Position Size Calculator
+                        </h5>
+                        <span class="badge bg-primary">Lot-based</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="positionSizeCalc">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Account Balance ($)</label>
+                                    <input type="number" id="accountBalance" class="form-control bg-dark text-light border-secondary" value="10000" step="100" min="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Risk Percentage (%)</label>
+                                    <input type="number" id="riskPercent" class="form-control bg-dark text-light border-secondary" value="2" step="0.1" min="0.1" max="100">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Stop Loss (pips)</label>
+                                    <input type="number" id="stopLossPips" class="form-control bg-dark text-light border-secondary" value="50" step="1" min="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Pip Value ($ per lot)</label>
+                                    <input type="number" id="pipValue" class="form-control bg-dark text-light border-secondary" value="10" step="0.01" min="0.01">
+                                </div>
+                            </div>
+                            <button type="button" id="calcPositionBtn" class="btn btn-primary w-100 mt-3">
+                                <i class="fas fa-sync-alt me-2"></i>Calculate
+                            </button>
+                        </form>
+                        <div id="positionResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                            <small class="text-muted">Enter values and click Calculate</small>
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            <i class="fas fa-info-circle me-1"></i> Formula: <code>Risk Amount = Balance × Risk%</code><br>
+                            <code>Position Size = Risk Amount ÷ (Stop Loss × Pip Value)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Risk/Reward Calculator (with Risk:Reward Ratio) -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-light">
+                            <i class="fas fa-chart-line text-success me-2"></i>Risk/Reward Calculator
+                        </h5>
+                        <span class="badge bg-success">R:R ratio</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="riskRewardCalc">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Entry Price</label>
+                                    <input type="number" id="entryPrice" class="form-control bg-dark text-light border-secondary" value="1.1000" step="0.0001">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Stop Loss</label>
+                                    <input type="number" id="stopLossPrice" class="form-control bg-dark text-light border-secondary" value="1.0950" step="0.0001">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Take Profit</label>
+                                    <input type="number" id="takeProfitPrice" class="form-control bg-dark text-light border-secondary" value="1.1100" step="0.0001">
+                                </div>
+                            </div>
+                            <button type="button" id="calcRRBtn" class="btn btn-success w-100 mt-3">
+                                <i class="fas fa-balance-scale me-2"></i>Calculate R:R
+                            </button>
+                        </form>
+                        <div id="rrResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                            <small class="text-muted">Enter entry, stop & target</small>
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            <i class="fas fa-info-circle me-1"></i> Risk = |Entry – Stop|, Reward = |Target – Entry|<br>
+                            <strong>Min. recommended R:R ≥ 1:2</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Additional Quick Calculator Row -->
+        <div class="row g-4 mt-2">
+            <!-- Pip Value Calculator (NEW) -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-light">
+                            <i class="fas fa-water text-info me-2"></i>Pip Value Calculator
+                        </h5>
+                        <span class="badge bg-info">Forex</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="pipValueCalc">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Currency Pair</label>
+                                    <select id="currencyPair" class="form-select bg-dark text-light border-secondary">
+                                        <option value="EURUSD">EUR/USD</option>
+                                        <option value="GBPUSD">GBP/USD</option>
+                                        <option value="USDJPY">USD/JPY</option>
+                                        <option value="AUDUSD">AUD/USD</option>
+                                        <option value="USDCAD">USD/CAD</option>
+                                        <option value="USDCHF">USD/CHF</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Lot Size</label>
+                                    <select id="lotSize" class="form-select bg-dark text-light border-secondary">
+                                        <option value="100000">Standard (100,000)</option>
+                                        <option value="10000">Mini (10,000)</option>
+                                        <option value="1000">Micro (1,000)</option>
+                                        <option value="100">Nano (100)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Account Currency</label>
+                                    <select id="accountCurrency" class="form-select bg-dark text-light border-secondary">
+                                        <option value="USD">USD</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="JPY">JPY</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-light">Current Rate (if JPY)</label>
+                                    <input type="number" id="jpyRate" class="form-control bg-dark text-light border-secondary" value="110.00" step="0.01">
+                                </div>
+                            </div>
+                            <button type="button" id="calcPipValueBtn" class="btn btn-info w-100 mt-3">
+                                <i class="fas fa-water me-2"></i>Calculate Pip Value
+                            </button>
+                        </form>
+                        <div id="pipValueResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                            <small class="text-muted">Pip value will appear here</small>
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            <i class="fas fa-info-circle me-1"></i> For pairs with USD as quote: $10 per standard lot.<br>
+                            For USD/JPY: Pip value = 0.01 × lot size ÷ rate.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Spread Cost Calculator (NEW) -->
+            <div class="col-lg-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-light">
+                            <i class="fas fa-arrows-left-right text-warning me-2"></i>Spread Cost Calculator
+                        </h5>
+                        <span class="badge bg-warning">Cost analysis</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="spreadCostCalc">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Pip Value ($)</label>
+                                    <input type="number" id="spreadPipValue" class="form-control bg-dark text-light border-secondary" value="10" step="0.1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Spread (pips)</label>
+                                    <input type="number" id="spreadPips" class="form-control bg-dark text-light border-secondary" value="1.5" step="0.1" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-light">Lot Size</label>
+                                    <select id="spreadLotSize" class="form-select bg-dark text-light border-secondary">
+                                        <option value="1">1 Standard lot</option>
+                                        <option value="0.1">0.1 Mini lot</option>
+                                        <option value="0.01">0.01 Micro lot</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" id="calcSpreadBtn" class="btn btn-warning w-100 mt-3">
+                                <i class="fas fa-calculator me-2"></i>Calculate Spread Cost
+                            </button>
+                        </form>
+                        <div id="spreadResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                            <small class="text-muted">Spread cost will appear here</small>
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            <i class="fas fa-info-circle me-1"></i> Spread Cost = Pip Value × Spread × Lot Size
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== ALL TRADING TOOLS GRID (EXPANDED) ========== -->
+<section class="py-5 bg-dark bg-opacity-50">
+    <div class="container">
+        <h2 class="text-center mb-5 text-light">📋 All Trading Tools</h2>
+        <div class="row g-4">
+            {% if tools %}
+                {% for tool in tools %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-primary">
+                                {% if 'position' in tool.name|lower %}
+                                    <i class="fas fa-calculator"></i>
+                                {% elif 'risk' in tool.name|lower %}
+                                    <i class="fas fa-shield-alt"></i>
+                                {% elif 'pivot' in tool.name|lower %}
+                                    <i class="fas fa-chart-pie"></i>
+                                {% elif 'fibonacci' in tool.name|lower %}
+                                    <i class="fas fa-chart-line"></i>
+                                {% elif 'margin' in tool.name|lower %}
+                                    <i class="fas fa-coins"></i>
+                                {% elif 'calendar' in tool.name|lower %}
+                                    <i class="fas fa-calendar-alt"></i>
+                                {% elif 'pip' in tool.name|lower %}
+                                    <i class="fas fa-water"></i>
+                                {% elif 'spread' in tool.name|lower %}
+                                    <i class="fas fa-arrows-left-right"></i>
+                                {% elif 'swap' in tool.name|lower %}
+                                    <i class="fas fa-clock"></i>
+                                {% else %}
+                                    <i class="fas fa-tools"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="card-title text-light">{{ tool.name }}</h5>
+                            <p class="card-text text-muted small">{{ tool.description|default:"Professional trading tool" }}</p>
+                            <a href="{{ tool.url|default:'#' }}" class="btn btn-outline-primary stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#{{ tool.name|slugify }}Modal">
+                                <i class="fas fa-arrow-right me-1"></i>Launch Tool
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- ===== ENHANCED FALLBACK TOOLS – 12+ PROFESSIONAL TOOLS ===== -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-primary"><i class="fas fa-calculator"></i></div>
+                            <h5 class="card-title text-light">Position Size Calculator</h5>
+                            <p class="card-text text-muted small">Determine optimal lot size based on account risk, stop loss, and pip value.</p>
+                            <a href="#" class="btn btn-outline-primary stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#positionModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-success"><i class="fas fa-balance-scale"></i></div>
+                            <h5 class="card-title text-light">Risk/Reward Calculator</h5>
+                            <p class="card-text text-muted small">Calculate potential profit vs. loss ratio and optimal stop/target placement.</p>
+                            <a href="#" class="btn btn-outline-success stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#riskRewardModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-info"><i class="fas fa-water"></i></div>
+                            <h5 class="card-title text-light">Pip Value Calculator</h5>
+                            <p class="card-text text-muted small">Calculate pip value for any currency pair, lot size, and account currency.</p>
+                            <a href="#" class="btn btn-outline-info stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#pipValueModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-warning"><i class="fas fa-arrows-left-right"></i></div>
+                            <h5 class="card-title text-light">Spread Cost Calculator</h5>
+                            <p class="card-text text-muted small">Calculate the cost of spread in your account currency.</p>
+                            <a href="#" class="btn btn-outline-warning stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#spreadModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-secondary"><i class="fas fa-coins"></i></div>
+                            <h5 class="card-title text-light">Margin Calculator</h5>
+                            <p class="card-text text-muted small">Calculate required margin for leveraged trades (Forex, Indices, Crypto).</p>
+                            <a href="#" class="btn btn-outline-secondary stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#marginModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-danger"><i class="fas fa-clock"></i></div>
+                            <h5 class="card-title text-light">Swap/Interest Calculator</h5>
+                            <p class="card-text text-muted small">Calculate overnight swap charges for long/short positions.</p>
+                            <a href="#" class="btn btn-outline-danger stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#swapModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-primary"><i class="fas fa-chart-pie"></i></div>
+                            <h5 class="card-title text-light">Pivot Point Calculator</h5>
+                            <p class="card-text text-muted small">Classic, Fibonacci, Woodie, Camarilla pivot points with S/R levels.</p>
+                            <a href="#" class="btn btn-outline-primary stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#pivotModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-warning"><i class="fas fa-chart-line"></i></div>
+                            <h5 class="card-title text-light">Fibonacci Calculator</h5>
+                            <p class="card-text text-muted small">Retracement (23.6%, 38.2%, 50%, 61.8%, 78.6%) and extension levels.</p>
+                            <a href="#" class="btn btn-outline-warning stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#fibModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-success"><i class="fas fa-percent"></i></div>
+                            <h5 class="card-title text-light">Risk Percentage Calculator</h5>
+                            <p class="card-text text-muted small">Convert dollar risk amount to percentage of account balance.</p>
+                            <a href="#" class="btn btn-outline-success stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#riskPercentModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-info"><i class="fas fa-chart-bar"></i></div>
+                            <h5 class="card-title text-light">Lot Size Converter</h5>
+                            <p class="card-text text-muted small">Convert between standard, mini, micro, and nano lots.</p>
+                            <a href="#" class="btn btn-outline-info stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#lotConverterModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-secondary"><i class="fas fa-calendar-alt"></i></div>
+                            <h5 class="card-title text-light">Economic Calendar</h5>
+                            <p class="card-text text-muted small">Track key macroeconomic events and their impact.</p>
+                            <a href="#" class="btn btn-outline-secondary stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#calendarModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card tool-card bg-dark border-secondary h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3 text-danger"><i class="fas fa-chart-simple"></i></div>
+                            <h5 class="card-title text-light">Volatility Calculator</h5>
+                            <p class="card-text text-muted small">Calculate ATR, historical volatility, and expected range.</p>
+                            <a href="#" class="btn btn-outline-danger stretched-link mt-3" data-bs-toggle="modal" data-bs-target="#volatilityModal">Launch Tool</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- ========== COMPREHENSIVE TOOL MODALS ========== -->
+<!-- Position Size Modal (Enhanced) -->
+<div class="modal fade" id="positionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-calculator me-2 text-primary"></i>Position Size Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form id="positionModalCalc">
+                            <div class="mb-3">
+                                <label class="form-label text-light">Account Balance ($)</label>
+                                <input type="number" id="modalAccountBalance" class="form-control bg-dark text-light border-secondary" value="10000" step="100">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Risk (%)</label>
+                                <input type="number" id="modalRiskPercent" class="form-control bg-dark text-light border-secondary" value="2" step="0.1" min="0.01">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Stop Loss (pips)</label>
+                                <input type="number" id="modalStopLoss" class="form-control bg-dark text-light border-secondary" value="50" step="1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Pip Value ($ per lot)</label>
+                                <input type="number" id="modalPipValue" class="form-control bg-dark text-light border-secondary" value="10" step="0.01">
+                            </div>
+                            <button type="button" id="calcModalPositionBtn" class="btn btn-primary w-100">Calculate</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-dark p-3 rounded border border-secondary h-100">
+                            <h6 class="text-light">Result:</h6>
+                            <div id="modalPositionResult" class="mt-2">
+                                <p class="text-muted">Position size will appear here</p>
+                            </div>
+                            <hr class="bg-secondary">
+                            <h6 class="text-light mt-3">How it works</h6>
+                            <small class="text-muted">
+                                <strong>Risk Amount</strong> = Balance × (Risk% / 100)<br>
+                                <strong>Position Size</strong> = Risk Amount ÷ (Stop Loss × Pip Value)<br>
+                                <span class="text-info">Example: $10,000, 2% risk, 50 pip stop, $10 pip value → 0.4 lots</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Risk/Reward Modal (Enhanced) -->
+<div class="modal fade" id="riskRewardModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-balance-scale me-2 text-success"></i>Risk/Reward Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="riskRewardModalCalc">
+                    <div class="mb-3">
+                        <label class="form-label text-light">Entry Price</label>
+                        <input type="number" id="modalEntryPrice" class="form-control bg-dark text-light border-secondary" value="1.1000" step="0.0001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Stop Loss</label>
+                        <input type="number" id="modalStopLossPrice" class="form-control bg-dark text-light border-secondary" value="1.0950" step="0.0001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Take Profit</label>
+                        <input type="number" id="modalTakeProfitPrice" class="form-control bg-dark text-light border-secondary" value="1.1100" step="0.0001">
+                    </div>
+                    <button type="button" id="calcModalRRBtn" class="btn btn-success w-100">Calculate R:R</button>
+                </form>
+                <div id="modalRRResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                    <small class="text-muted">Risk/Reward ratio will appear here</small>
+                </div>
+                <div class="mt-3 small text-muted">
+                    <i class="fas fa-lightbulb me-1"></i> 
+                    <strong>Professional tip:</strong> Aim for a risk/reward ratio of at least 1:2. This means you risk $1 to make $2.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pip Value Modal -->
+<div class="modal fade" id="pipValueModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-water me-2 text-info"></i>Pip Value Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pipValueModalCalc">
+                    <div class="mb-3">
+                        <label class="form-label text-light">Currency Pair</label>
+                        <select id="modalCurrencyPair" class="form-select bg-dark text-light border-secondary">
+                            <option value="EURUSD">EUR/USD</option>
+                            <option value="GBPUSD">GBP/USD</option>
+                            <option value="USDJPY">USD/JPY</option>
+                            <option value="AUDUSD">AUD/USD</option>
+                            <option value="USDCAD">USD/CAD</option>
+                            <option value="USDCHF">USD/CHF</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Lot Size</label>
+                        <select id="modalLotSize" class="form-select bg-dark text-light border-secondary">
+                            <option value="100000">Standard (100,000)</option>
+                            <option value="10000">Mini (10,000)</option>
+                            <option value="1000">Micro (1,000)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Account Currency</label>
+                        <select id="modalAccountCurrency" class="form-select bg-dark text-light border-secondary">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="jpyRateContainer">
+                        <label class="form-label text-light">USD/JPY Rate (if JPY)</label>
+                        <input type="number" id="modalJpyRate" class="form-control bg-dark text-light border-secondary" value="110.00" step="0.01">
+                    </div>
+                    <button type="button" id="calcModalPipValueBtn" class="btn btn-info w-100">Calculate Pip Value</button>
+                </form>
+                <div id="modalPipValueResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                    <small class="text-muted">Pip value will appear here</small>
+                </div>
+                <div class="mt-2 small text-muted">
+                    <strong>Formula:</strong><br>
+                    • USD quote: Pip = 0.0001 × Lot Size<br>
+                    • USD/JPY: Pip = 0.01 × Lot Size ÷ Rate<br>
+                    • Cross pairs require conversion to account currency.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Spread Cost Modal -->
+<div class="modal fade" id="spreadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-arrows-left-right me-2 text-warning"></i>Spread Cost Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="spreadModalCalc">
+                    <div class="mb-3">
+                        <label class="form-label text-light">Pip Value ($)</label>
+                        <input type="number" id="modalSpreadPipValue" class="form-control bg-dark text-light border-secondary" value="10" step="0.1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Spread (pips)</label>
+                        <input type="number" id="modalSpreadPips" class="form-control bg-dark text-light border-secondary" value="1.5" step="0.1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Lot Size</label>
+                        <select id="modalSpreadLotSize" class="form-select bg-dark text-light border-secondary">
+                            <option value="1">1 Standard lot</option>
+                            <option value="0.1">0.1 Mini lot</option>
+                            <option value="0.01">0.01 Micro lot</option>
+                        </select>
+                    </div>
+                    <button type="button" id="calcModalSpreadBtn" class="btn btn-warning w-100">Calculate Spread Cost</button>
+                </form>
+                <div id="modalSpreadResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                    <small class="text-muted">Spread cost will appear here</small>
+                </div>
+                <div class="mt-2 small text-muted">
+                    <strong>Spread Cost = Pip Value × Spread × Lot Size</strong><br>
+                    Example: $10 × 1.5 × 1 = $15 per trade (round trip).
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Margin Calculator Modal -->
+<div class="modal fade" id="marginModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-coins me-2 text-secondary"></i>Margin Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="marginModalCalc">
+                    <div class="mb-3">
+                        <label class="form-label text-light">Instrument Type</label>
+                        <select id="instrumentType" class="form-select bg-dark text-light border-secondary">
+                            <option value="forex">Forex</option>
+                            <option value="indices">Indices</option>
+                            <option value="crypto">Crypto</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Trade Size (lots)</label>
+                        <input type="number" id="tradeSize" class="form-control bg-dark text-light border-secondary" value="1" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Contract Size</label>
+                        <select id="contractSize" class="form-select bg-dark text-light border-secondary">
+                            <option value="100000">100,000 (Forex standard)</option>
+                            <option value="1000">1,000 (Crypto)</option>
+                            <option value="1">1 (Indices)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Market Price</label>
+                        <input type="number" id="marketPrice" class="form-control bg-dark text-light border-secondary" value="1.1000" step="0.0001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light">Leverage</label>
+                        <select id="leverage" class="form-select bg-dark text-light border-secondary">
+                            <option value="1">1:1 (no leverage)</option>
+                            <option value="10">1:10</option>
+                            <option value="20">1:20</option>
+                            <option value="30">1:30</option>
+                            <option value="50">1:50</option>
+                            <option value="100" selected>1:100</option>
+                            <option value="200">1:200</option>
+                            <option value="500">1:500</option>
+                        </select>
+                    </div>
+                    <button type="button" id="calcMarginBtn" class="btn btn-secondary w-100">Calculate Margin</button>
+                </form>
+                <div id="marginResult" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                    <small class="text-muted">Required margin will appear here</small>
+                </div>
+                <div class="mt-2 small text-muted">
+                    <strong>Margin = (Trade Size × Contract Size × Price) ÷ Leverage</strong><br>
+                    Always ensure your margin level stays above 100% to avoid margin call.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fibonacci Calculator Modal -->
+<div class="modal fade" id="fibModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-chart-line me-2 text-warning"></i>Fibonacci Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form id="fibModalCalc">
+                            <div class="mb-3">
+                                <label class="form-label text-light">Swing High</label>
+                                <input type="number" id="fibHigh" class="form-control bg-dark text-light border-secondary" value="1.2000" step="0.0001">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Swing Low</label>
+                                <input type="number" id="fibLow" class="form-control bg-dark text-light border-secondary" value="1.1000" step="0.0001">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Calculation</label>
+                                <select id="fibType" class="form-select bg-dark text-light border-secondary">
+                                    <option value="retracement">Retracement Levels</option>
+                                    <option value="extension">Extension Levels</option>
+                                </select>
+                            </div>
+                            <button type="button" id="calcFibBtn" class="btn btn-warning w-100">Calculate</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-dark p-3 rounded border border-secondary h-100">
+                            <h6 class="text-light">Fibonacci Levels:</h6>
+                            <div id="fibResult" class="mt-2">
+                                <p class="text-muted">Click Calculate to see levels</p>
+                            </div>
+                            <hr class="bg-secondary">
+                            <small class="text-muted">
+                                <strong>Key retracements:</strong> 23.6%, 38.2%, 50%, 61.8%, 78.6%<br>
+                                <strong>Extensions:</strong> 127.2%, 161.8%, 261.8%
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pivot Points Modal -->
+<div class="modal fade" id="pivotModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light"><i class="fas fa-chart-pie me-2 text-primary"></i>Pivot Point Calculator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <form id="pivotModalCalc">
+                            <div class="mb-3">
+                                <label class="form-label text-light">Previous High</label>
+                                <input type="number" id="pivotHigh" class="form-control bg-dark text-light border-secondary" value="1.1100" step="0.0001">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Previous Low</label>
+                                <input type="number" id="pivotLow" class="form-control bg-dark text-light border-secondary" value="1.0900" step="0.0001">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Previous Close</label>
+                                <input type="number" id="pivotClose" class="form-control bg-dark text-light border-secondary" value="1.1000" step="0.0001">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light">Pivot Type</label>
+                                <select id="pivotType" class="form-select bg-dark text-light border-secondary">
+                                    <option value="classic">Classic</option>
+                                    <option value="fibonacci">Fibonacci</option>
+                                    <option value="woodie">Woodie</option>
+                                    <option value="camarilla">Camarilla</option>
+                                </select>
+                            </div>
+                            <button type="button" id="calcPivotBtn" class="btn btn-primary w-100">Calculate Pivots</button>
+                        </form>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="bg-dark p-3 rounded border border-secondary h-100">
+                            <h6 class="text-light">Support & Resistance Levels:</h6>
+                            <div id="pivotResult" class="mt-2">
+                                <p class="text-muted">Click Calculate to see levels</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional modals for other tools (swap, volatility, lot converter, etc.) can be added similarly -->
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        border-color: var(--primary-color) !important;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+    .tool-card {
+        border-radius: 15px;
+        transition: all 0.2s;
+    }
+    .tool-card .stretched-link {
+        opacity: 0;
+    }
+    .tool-card:hover .btn {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .modal-content {
+        background-color: #1e1e2e;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-close-white {
+        filter: invert(1);
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+    }
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ----- UTILITY FUNCTIONS -----
+    function formatCurrency(value, decimals = 2) {
+        return parseFloat(value).toFixed(decimals);
+    }
+
+    // ----- POSITION SIZE CALCULATOR (Inline) -----
+    document.getElementById('calcPositionBtn')?.addEventListener('click', function() {
+        const balance = parseFloat(document.getElementById('accountBalance').value) || 0;
+        const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 0;
+        const stopLoss = parseFloat(document.getElementById('stopLossPips').value) || 0;
+        const pipValue = parseFloat(document.getElementById('pipValue').value) || 0;
+        
+        if (balance && riskPercent && stopLoss && pipValue) {
+            const riskAmount = balance * (riskPercent / 100);
+            const positionSize = riskAmount / (stopLoss * pipValue);
+            document.getElementById('positionResult').innerHTML = `
+                <strong class="text-light">Position Size:</strong> 
+                <span class="text-info">${positionSize.toFixed(2)} standard lots</span><br>
+                <small class="text-muted">Risk Amount: $${riskAmount.toFixed(2)}</small><br>
+                <small class="text-muted">Units: ${(positionSize * 100000).toFixed(0)}</small>
+            `;
+        } else {
+            alert('Please fill in all fields');
+        }
+    });
+
+    // Modal Position Calculator
+    document.getElementById('calcModalPositionBtn')?.addEventListener('click', function() {
+        const balance = parseFloat(document.getElementById('modalAccountBalance').value) || 0;
+        const riskPercent = parseFloat(document.getElementById('modalRiskPercent').value) || 0;
+        const stopLoss = parseFloat(document.getElementById('modalStopLoss').value) || 0;
+        const pipValue = parseFloat(document.getElementById('modalPipValue').value) || 0;
+        
+        if (balance && riskPercent && stopLoss && pipValue) {
+            const riskAmount = balance * (riskPercent / 100);
+            const positionSize = riskAmount / (stopLoss * pipValue);
+            document.getElementById('modalPositionResult').innerHTML = `
+                <p class="text-light">Position Size: <strong class="text-info">${positionSize.toFixed(2)}</strong> lots</p>
+                <p class="text-muted">Risk Amount: $${riskAmount.toFixed(2)}</p>
+                <p class="text-muted">Units: ${(positionSize * 100000).toFixed(0)}</p>
+            `;
+        }
+    });
+
+    // ----- RISK/REWARD CALCULATOR (Inline) -----
+    document.getElementById('calcRRBtn')?.addEventListener('click', function() {
+        const entry = parseFloat(document.getElementById('entryPrice').value) || 0;
+        const stop = parseFloat(document.getElementById('stopLossPrice').value) || 0;
+        const target = parseFloat(document.getElementById('takeProfitPrice').value) || 0;
+        
+        if (entry && stop && target) {
+            const risk = Math.abs(entry - stop);
+            const reward = Math.abs(target - entry);
+            const ratio = reward / risk;
+            document.getElementById('rrResult').innerHTML = `
+                <strong class="text-light">Risk/Reward Ratio:</strong> 
+                <span class="text-success">1 : ${ratio.toFixed(2)}</span><br>
+                <small class="text-muted">Risk: ${risk.toFixed(4)} | Reward: ${reward.toFixed(4)}</small>
+                ${ratio >= 2 ? '<span class="badge bg-success ms-2">Excellent</span>' : ratio >= 1 ? '<span class="badge bg-warning ms-2">Acceptable</span>' : '<span class="badge bg-danger ms-2">Poor</span>'}
+            `;
+        }
+    });
+
+    // Modal R/R Calculator
+    document.getElementById('calcModalRRBtn')?.addEventListener('click', function() {
+        const entry = parseFloat(document.getElementById('modalEntryPrice').value) || 0;
+        const stop = parseFloat(document.getElementById('modalStopLossPrice').value) || 0;
+        const target = parseFloat(document.getElementById('modalTakeProfitPrice').value) || 0;
+        
+        if (entry && stop && target) {
+            const risk = Math.abs(entry - stop);
+            const reward = Math.abs(target - entry);
+            const ratio = reward / risk;
+            document.getElementById('modalRRResult').innerHTML = `
+                <strong class="text-light">Risk/Reward: 1 : ${ratio.toFixed(2)}</strong><br>
+                <small>Risk: ${risk.toFixed(4)} | Reward: ${reward.toFixed(4)}</small>
+            `;
+        }
+    });
+
+    // ----- PIP VALUE CALCULATOR (Inline) -----
+    document.getElementById('calcPipValueBtn')?.addEventListener('click', function() {
+        const pair = document.getElementById('currencyPair').value;
+        const lotSize = parseFloat(document.getElementById('lotSize').value);
+        const accountCurrency = document.getElementById('accountCurrency').value;
+        const jpyRate = parseFloat(document.getElementById('jpyRate').value) || 110;
+        let pipValue;
+
+        if (pair.includes('JPY')) {
+            pipValue = (0.01 * lotSize) / jpyRate;
+        } else {
+            pipValue = 0.0001 * lotSize;
+        }
+
+        // Simple conversion if account currency not USD
+        if (accountCurrency !== 'USD') {
+            // This is a simplified conversion – in reality would need exchange rate
+            pipValue = pipValue * 0.9; // assume EUR/USD = 0.9 for demo
+        }
+
+        document.getElementById('pipValueResult').innerHTML = `
+            <strong class="text-light">Pip Value:</strong> 
+            <span class="text-info">${accountCurrency} ${pipValue.toFixed(4)}</span><br>
+            <small class="text-muted">Per 1 pip movement for selected lot size.</small>
+        `;
+    });
+
+    // ----- SPREAD COST CALCULATOR (Inline) -----
+    document.getElementById('calcSpreadBtn')?.addEventListener('click', function() {
+        const pipValue = parseFloat(document.getElementById('spreadPipValue').value) || 0;
+        const spread = parseFloat(document.getElementById('spreadPips').value) || 0;
+        const lotSize = parseFloat(document.getElementById('spreadLotSize').value) || 1;
+        const cost = pipValue * spread * lotSize;
+        document.getElementById('spreadResult').innerHTML = `
+            <strong class="text-light">Spread Cost:</strong> 
+            <span class="text-warning">$${cost.toFixed(2)}</span><br>
+            <small class="text-muted">Per standard lot round trip.</small>
+        `;
+    });
+
+    // ----- FIBONACCI CALCULATOR (Modal) -----
+    document.getElementById('calcFibBtn')?.addEventListener('click', function() {
+        const high = parseFloat(document.getElementById('fibHigh').value) || 0;
+        const low = parseFloat(document.getElementById('fibLow').value) || 0;
+        const type = document.getElementById('fibType').value;
+        const diff = high - low;
+        let html = '<table class="table table-sm table-dark">';
+
+        if (type === 'retracement') {
+            const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+            html += '<tr><th>Level</th><th>Price</th></tr>';
+            levels.forEach(level => {
+                const price = high - (diff * level);
+                html += `<tr><td>${(level*100).toFixed(1)}%</td><td>$${price.toFixed(4)}</td></tr>`;
+            });
+        } else {
+            const extensions = [1.272, 1.618, 2.618];
+            html += '<tr><th>Extension</th><th>Price</th></tr>';
+            extensions.forEach(ext => {
+                const price = high + (diff * ext);
+                html += `<tr><td>${(ext*100).toFixed(1)}%</td><td>$${price.toFixed(4)}</td></tr>`;
+            });
+        }
+        html += '</table>';
+        document.getElementById('fibResult').innerHTML = html;
+    });
+
+    // ----- PIVOT POINTS CALCULATOR (Modal) -----
+    document.getElementById('calcPivotBtn')?.addEventListener('click', function() {
+        const high = parseFloat(document.getElementById('pivotHigh').value) || 0;
+        const low = parseFloat(document.getElementById('pivotLow').value) || 0;
+        const close = parseFloat(document.getElementById('pivotClose').value) || 0;
+        const type = document.getElementById('pivotType').value;
+        let html = '';
+
+        if (type === 'classic') {
+            const pivot = (high + low + close) / 3;
+            const r1 = 2 * pivot - low;
+            const r2 = pivot + (high - low);
+            const r3 = r2 + (high - low);
+            const s1 = 2 * pivot - high;
+            const s2 = pivot - (high - low);
+            const s3 = s2 - (high - low);
+            html = `
+                <table class="table table-sm table-dark">
+                    <tr><th>Level</th><th>Price</th></tr>
+                    <tr><td>R3</td><td>$${r3.toFixed(4)}</td></tr>
+                    <tr><td>R2</td><td>$${r2.toFixed(4)}</td></tr>
+                    <tr><td>R1</td><td>$${r1.toFixed(4)}</td></tr>
+                    <tr><td>Pivot</td><td class="text-primary">$${pivot.toFixed(4)}</td></tr>
+                    <tr><td>S1</td><td>$${s1.toFixed(4)}</td></tr>
+                    <tr><td>S2</td><td>$${s2.toFixed(4)}</td></tr>
+                    <tr><td>S3</td><td>$${s3.toFixed(4)}</td></tr>
+                </table>
+            `;
+        } else {
+            html = '<p class="text-muted">Other pivot types available in premium version.</p>';
+        }
+        document.getElementById('pivotResult').innerHTML = html;
+    });
+
+    // ----- MARGIN CALCULATOR (Modal) -----
+    document.getElementById('calcMarginBtn')?.addEventListener('click', function() {
+        const tradeSize = parseFloat(document.getElementById('tradeSize').value) || 0;
+        const contractSize = parseFloat(document.getElementById('contractSize').value) || 0;
+        const price = parseFloat(document.getElementById('marketPrice').value) || 0;
+        const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+        const margin = (tradeSize * contractSize * price) / leverage;
+        document.getElementById('marginResult').innerHTML = `
+            <strong class="text-light">Required Margin:</strong> 
+            <span class="text-info">$${margin.toFixed(2)}</span><br>
+            <small class="text-muted">Leverage: 1:${leverage}</small>
+        `;
+    });
+
+    // Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

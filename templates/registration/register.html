@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - SkillLink FX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card bg-dark border-secondary shadow-lg">
+                <div class="card-header bg-transparent border-secondary text-center py-4">
+                    <h2 class="text-light mb-0">
+                        <i class="fas fa-user-plus me-2 text-primary"></i>Create Account
+                    </h2>
+                    <p class="text-muted small mt-2">Join SkillLink FX and start trading smarter</p>
+                </div>
+                <div class="card-body p-4">
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger bg-danger text-white border-0">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_username" class="form-label text-light fw-semibold">
+                                    <i class="fas fa-user me-2 text-primary"></i>Username
+                                </label>
+                                <input type="text" name="username" id="id_username" 
+                                       class="form-control bg-dark text-light border-secondary {% if form.username.errors %}is-invalid{% endif %}" 
+                                       placeholder="Choose a username" value="{{ form.username.value|default:'' }}" required>
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_email" class="form-label text-light fw-semibold">
+                                    <i class="fas fa-envelope me-2 text-primary"></i>Email (optional)
+                                </label>
+                                <input type="email" name="email" id="id_email" 
+                                       class="form-control bg-dark text-light border-secondary {% if form.email.errors %}is-invalid{% endif %}" 
+                                       placeholder="your@email.com" value="{{ form.email.value|default:'' }}">
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label text-light fw-semibold">
+                                    <i class="fas fa-user-tag me-2 text-primary"></i>First Name (optional)
+                                </label>
+                                <input type="text" name="first_name" id="id_first_name" 
+                                       class="form-control bg-dark text-light border-secondary {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                       placeholder="First name" value="{{ form.first_name.value|default:'' }}">
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label text-light fw-semibold">
+                                    <i class="fas fa-user-tag me-2 text-primary"></i>Last Name (optional)
+                                </label>
+                                <input type="text" name="last_name" id="id_last_name" 
+                                       class="form-control bg-dark text-light border-secondary {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                       placeholder="Last name" value="{{ form.last_name.value|default:'' }}">
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label text-light fw-semibold">
+                                <i class="fas fa-lock me-2 text-primary"></i>Password
+                            </label>
+                            <input type="password" name="password1" id="id_password1" 
+                                   class="form-control bg-dark text-light border-secondary {% if form.password1.errors %}is-invalid{% endif %}" 
+                                   placeholder="Create a password" required>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback">{{ form.password1.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted">At least 8 characters, not entirely numeric</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_password2" class="form-label text-light fw-semibold">
+                                <i class="fas fa-lock me-2 text-primary"></i>Confirm Password
+                            </label>
+                            <input type="password" name="password2" id="id_password2" 
+                                   class="form-control bg-dark text-light border-secondary {% if form.password2.errors %}is-invalid{% endif %}" 
+                                   placeholder="Re-enter password" required>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback">{{ form.password2.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Sign Up
+                        </button>
+
+                        <div class="text-center">
+                            <span class="text-muted small">Already have an account?</span>
+                            <a href="{% url 'login' %}" class="text-primary small text-decoration-none ms-1">Login</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-transparent border-secondary text-center py-3">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>By registering you agree to our Terms of Service
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

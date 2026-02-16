@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - SkillLink FX{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero bg-gradient-primary text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Master Trading with <span class="text-warning">SkillLink FX</span></h1>
+                <p class="lead mb-4">Advanced trading analysis platform providing real-time signals, market insights, and educational resources to help traders win big.</p>
+                <div class="d-flex gap-3">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                    </a>
+                    {% else %}
+                    <a href="#" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Get Started Free
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-dark rounded-4 p-5 text-center border border-secondary">
+    <i class="fas fa-chart-simple fa-6x text-primary mb-4"></i>
+    <h4 class="text-light">Interactive Charts</h4>
+    <p class="text-muted">Zoom, pan, draw – professional charting experience.</p>
+</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-dark">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark border-primary">
+                    <div class="card-body">
+                        <h2 class="display-4 text-primary">{{ total_traders|default:"0" }}+</h2>
+                        <p class="text-muted">Active Traders</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark border-success">
+                    <div class="card-body">
+                        <h2 class="display-4 text-success">{{ total_signals|default:"0" }}+</h2>
+                        <p class="text-muted">Live Signals</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark border-warning">
+                    <div class="card-body">
+                        <h2 class="display-4 text-warning">{{ total_markets|default:"0" }}+</h2>
+                        <p class="text-muted">Markets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark border-info">
+                    <div class="card-body">
+                        <h2 class="display-4 text-info">95%</h2>
+                        <p class="text-muted">Accuracy Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== TABBED CONTENT SECTION ========== -->
+<section class="py-5">
+    <div class="container">
+        <!-- Tabs Navigation -->
+        <div class="d-flex justify-content-center mb-5">
+            <ul class="nav nav-tabs border-0" id="homeTabs" role="tablist">
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link active bg-transparent text-light border-0 px-4 py-2" 
+                            id="markets-tab" data-bs-toggle="tab" data-bs-target="#markets" 
+                            type="button" role="tab" aria-controls="markets" aria-selected="true">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>Markets
+                    </button>
+                </li>
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link bg-transparent text-light border-0 px-4 py-2" 
+                            id="signals-tab" data-bs-toggle="tab" data-bs-target="#signals" 
+                            type="button" role="tab" aria-controls="signals" aria-selected="false">
+                        <i class="fas fa-flag me-2 text-warning"></i>Signals
+                    </button>
+                </li>
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link bg-transparent text-light border-0 px-4 py-2" 
+                            id="education-tab" data-bs-toggle="tab" data-bs-target="#education" 
+                            type="button" role="tab" aria-controls="education" aria-selected="false">
+                        <i class="fas fa-graduation-cap me-2 text-info"></i>Education
+                    </button>
+                </li>
+                <li class="nav-item mx-2" role="presentation">
+                    <button class="nav-link bg-transparent text-light border-0 px-4 py-2" 
+                            id="analysis-tab" data-bs-toggle="tab" data-bs-target="#analysis" 
+                            type="button" role="tab" aria-controls="analysis" aria-selected="false">
+                        <i class="fas fa-brain me-2 text-success"></i>Analysis
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tab Panes -->
+        <div class="tab-content" id="homeTabsContent">
+            <!-- MARKETS TAB PANE -->
+            <div class="tab-pane fade show active" id="markets" role="tabpanel" aria-labelledby="markets-tab">
+                <div class="row g-4">
+                    {% for market in featured_markets %}
+                    <div class="col-md-3">
+                        <div class="card market-card bg-dark border-secondary h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title text-light">{{ market.symbol }}</h5>
+                                    <span class="badge bg-{% if market.change_24h >= 0 %}success{% else %}danger{% endif %}">
+                                        {{ market.change_24h }}%
+                                    </span>
+                                </div>
+                                <p class="text-muted small mb-2">{{ market.name|truncatechars:30 }}</p>
+                                <h4 class="text-light mb-3">${{ market.current_price }}</h4>
+                                <a href="{% url 'market_detail' market.symbol %}" class="btn btn-outline-primary btn-sm w-100">
+                                    View <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <p class="text-muted">No markets available.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'markets' %}" class="btn btn-outline-primary">
+                        View All Markets <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SIGNALS TAB PANE -->
+            <div class="tab-pane fade" id="signals" role="tabpanel" aria-labelledby="signals-tab">
+                <div class="row g-4">
+                    {% for signal in latest_signals %}
+                    <div class="col-md-4">
+                        <div class="card signal-card bg-dark border-secondary h-100 {% if signal.signal_type == 'buy' %}buy{% elif signal.signal_type == 'sell' %}sell{% endif %}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-{% if signal.signal_type == 'buy' %}success{% elif signal.signal_type == 'sell' %}danger{% else %}secondary{% endif %}">
+                                        {{ signal.get_signal_type_display|upper }}
+                                    </span>
+                                    <span class="badge bg-{% if signal.strength == 'weak' %}danger{% elif signal.strength == 'moderate' %}warning{% elif signal.strength == 'strong' %}info{% else %}success{% endif %}">
+                                        {{ signal.get_strength_display }}
+                                    </span>
+                                </div>
+                                <h5 class="card-title text-light">{{ signal.market.symbol }}</h5>
+                                <div class="row g-1 mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Entry</small>
+                                        <strong class="text-light">${{ signal.entry_price }}</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Target</small>
+                                        <strong class="text-success">${{ signal.target_price }}</strong>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ signal.timeframe }}</small>
+                                    <small class="text-muted">{{ signal.expires_at|timeuntil }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <p class="text-muted">No active signals.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'signals' %}" class="btn btn-outline-warning">
+                        View All Signals <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- EDUCATION TAB PANE -->
+            <div class="tab-pane fade" id="education" role="tabpanel" aria-labelledby="education-tab">
+                <div class="row g-4">
+                    {% for item in educational_content %}
+                    <div class="col-md-3">
+                        <div class="card education-card bg-dark border-secondary h-100">
+                            <div class="card-body">
+                                <span class="badge bg-{{ item.difficulty_level|yesno:'success,warning,danger' }} mb-2">
+                                    {{ item.get_difficulty_level_display|default:item.difficulty_level|title }}
+                                </span>
+                                <h5 class="card-title text-light">{{ item.title|truncatechars:40 }}</h5>
+                                <p class="card-text text-muted small">{{ item.content|striptags|truncatewords:15 }}</p>
+                                <div class="mt-auto">
+                                    <a href="{% url 'education_detail' item.content_id %}" class="btn btn-outline-info btn-sm w-100">
+                                        Read More
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <p class="text-muted">No educational content yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'education' %}" class="btn btn-outline-info">
+                        Browse Library <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ANALYSIS TAB PANE -->
+            <div class="tab-pane fade" id="analysis" role="tabpanel" aria-labelledby="analysis-tab">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-body">
+                                <h5 class="text-light"><i class="fas fa-chart-pie me-2 text-primary"></i>Technical Analysis</h5>
+                                <p class="text-muted">RSI, MACD, and moving averages suggest bullish momentum on major pairs.</p>
+                                <a href="{% url 'analysis' %}" class="btn btn-sm btn-outline-primary">Read Report</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-secondary">
+                            <div class="card-body">
+                                <h5 class="text-light"><i class="fas fa-globe me-2 text-success"></i>Fundamental Outlook</h5>
+                                <p class="text-muted">Fed rate decision preview – impact on USD and global markets.</p>
+                                <a href="{% url 'analysis' %}" class="btn btn-sm btn-outline-success">Read Report</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'analysis' %}" class="btn btn-outline-success">
+                        Go to Analysis Tools <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-gradient-primary text-white">
+    <div class="container text-center py-5">
+        <h2 class="display-5 mb-4">Ready to Elevate Your Trading?</h2>
+        <p class="lead mb-4">Join thousands of successful traders using SkillLink FX</p>
+        <a href="#" class="btn btn-light btn-lg">
+            <i class="fas fa-rocket me-2"></i> Start Free Trial
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Tab Styling */
+    .nav-tabs .nav-link {
+        font-weight: 600;
+        border-radius: 30px;
+        transition: all 0.2s;
+    }
+    .nav-tabs .nav-link:hover {
+        background: rgba(255,255,255,0.05) !important;
+        color: white !important;
+    }
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+        color: white !important;
+        box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+    }
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        border-color: var(--primary-color) !important;
+    }
+    /* Dark theme adjustments */
+    .card.bg-dark {
+        background-color: #1a1a2e !important;
+    }
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Ensure Bootstrap tabs work (Bootstrap 5 already included in base.html)
+    // Optional: trigger tab persistence via URL hash
+    document.addEventListener('DOMContentLoaded', function() {
+        var hash = window.location.hash;
+        if (hash) {
+            var tab = document.querySelector('button[data-bs-target="' + hash + '"]');
+            if (tab) {
+                var tabInstance = new bootstrap.Tab(tab);
+                tabInstance.show();
+            }
+        }
+    });
+</script>
+{% endblock %}
